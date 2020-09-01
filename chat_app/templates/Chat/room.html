@@ -8,11 +8,10 @@
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
     {{ room_name|json_script:"room-name" }}
-
     
     <script>
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
-
+        
         const chatSocket = new WebSocket(
             'ws://'
             + window.location.host
@@ -24,6 +23,7 @@
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             document.querySelector('#chat-log').value += (data.message + '\n');
+            notifyMe()
         };
 
         chatSocket.onclose = function(e) {
@@ -46,6 +46,41 @@
             }));
             messageInputDom.value = '';
         };
+
+        function showNotification() {
+            const notification = new Notification("New message incoming", {
+            body: "You have some Message"
+            // icon: "yourimageurl.png"
+             })
+        }
+
+        function notifyMe() {
+            if (!window.Notification) {
+                console.log('Browser does not support notifications.');
+            } else {
+                // check if permission is already granted
+                if (Notification.permission === 'granted') {
+                    // show notification here
+                    showNotification();
+                } else {
+                    // request permission from user
+                    Notification.requestPermission().then(function (p) {
+                        if (p === 'granted') {
+                            // show notification here
+                            // var notify = new Notification('Hi there!', {
+                            //     body: 'How are you doing?',
+                            // });
+                            showNotification();
+                            console.log("allowed")
+                        } else {
+                            console.log('User blocked notifications.');
+                        }
+                    }).catch(function (err) {
+                        console.error(err);
+                    });
+                }
+            }
+        }
     </script>
 </body>
 </html>

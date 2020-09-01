@@ -37,7 +37,6 @@ class ChatConsumer(WebsocketConsumer):
                 'message': message
             }
         )
-        post_save.connect(show_notify, sender = notify)
 
     # Receive message from room group
     def chat_message(self, event):
