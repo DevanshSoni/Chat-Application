@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models.signals import post_save, pre_save
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 # Create your models here.
 
@@ -13,10 +15,15 @@ class notify(models.Model):
     message_received = models.TextField()
 
 def show_notify(sender, instance, **kwargs):    #---> Receiver Function
-    print("Something is here to show")
-    print(sender)
-    print(kwargs)
-    # print(instance.client_user_id,instance.host_user_id,instance.message)
-
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        "group_name",
+        {
+            'type': 'send_message',
+            'text': {
+                        'Message': "You have a new Message",
+                    }
+        }
+    )
 
 post_save.connect(show_notify, sender = notify)

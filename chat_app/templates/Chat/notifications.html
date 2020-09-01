@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<script type="text/javascript">
+	function showNotification() {
+   const notification = new Notification("New message incoming", {
+      body: "Hi there. How are you doing?"
+      // icon: "yourimageurl.png"
+   })
+   alert("heree")
+}
+	function notifyMe() {
+    if (!window.Notification) {
+        console.log('Browser does not support notifications.');
+    } else {
+        // check if permission is already granted
+        if (Notification.permission === 'granted') {
+            // show notification here
+            showNotification();
+        } else {
+            // request permission from user
+            Notification.requestPermission().then(function (p) {
+                if (p === 'granted') {
+                    // show notification here
+                    // var notify = new Notification('Hi there!', {
+                    //     body: 'How are you doing?',
+                    // });
+                    alert("permission granted")
+                    showNotification();
+                    console.log("allowed")
+                } else {
+                    console.log('User blocked notifications.');
+                }
+            }).catch(function (err) {
+                console.error(err);
+            });
+        }
+    }
+}
+</script>
+<body onload="notifyMe()">
+<!-- body content-->
+</body>
+</html>

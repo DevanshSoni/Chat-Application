@@ -1,6 +1,8 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from django.db.models.signals import post_save
+from .models import *
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -35,6 +37,7 @@ class ChatConsumer(WebsocketConsumer):
                 'message': message
             }
         )
+        post_save.connect(show_notify, sender = notify)
 
     # Receive message from room group
     def chat_message(self, event):
